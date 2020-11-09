@@ -1,0 +1,20 @@
+,Number of samples,Number of predicted samples
+Gut,51706,52848
+Skin,19455,20696
+Oral,10896,11350
+Urogenital,1204,1231
+Nose,489,236
+Mammal animal,29918,29261
+Non-mammal animal,11172,10613
+Building,11248,11000
+Soil,10507,10409
+Marine water,6090,5468
+Lake,4234,4158
+Plant,3456,3380
+Freshwater,3112,1923
+River,2248,2255
+Milk,1636,1611
+Sand,968,968
+Food,780,769
+Other,4074,4004
+Other human body-site,3018,1777
