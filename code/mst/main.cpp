@@ -86,8 +86,8 @@ map<string,int> gene_map_comp(string infile_name){
 
 int main() {
 
-	string buf_infile="51/all_51.query.out";
-	string minispantree_name="51/query_mst2.txt";
+	string buf_infile="all.query.out";
+	string minispantree_name="query_mst2.txt";
 	
 	vector<int> vec_vex_edge;
 	vec_vex_edge=find_vex_edge(buf_infile); 

@@ -9,7 +9,7 @@
 
 
 Graph_DG::Graph_DG(int vexnum, int edge) {
-    /
+
     this->vexnum = vexnum;
     this->edge = edge;
     
@@ -41,7 +41,7 @@ bool Graph_DG::check_edge_value(int start, int end, int weight) {
 }
 
 void Graph_DG::createGraph() {
-    cout << "请输入每条边的起点和终点（顶点编号从1开始）以及其权重" << endl;
+    cout << "Please input the start node & end node of each edge and the weight" << endl;
     int start;
     int end;
     double weight;
@@ -50,7 +50,7 @@ void Graph_DG::createGraph() {
         cin >> start >> end >> weight;
         
         while (!this->check_edge_value(start, end, weight)) {
-            cout << "输入的边的信息不合法，请重新输入" << endl;
+            cout << "The input is wrong, please input it again!" << endl;
             cin >> start >> end >> weight;
         }
         
@@ -149,7 +149,7 @@ map<int,string> Graph_DG::createGraph(string infile_name) {
 }
 
 void Graph_DG::print() {
-    cout << "图的邻接矩阵为：" << endl;
+    cout << "The adjacency matrix of the graph is" << endl;
     int count_row = 0; 
     int count_col = 0; 
    
@@ -312,13 +312,13 @@ void Graph_DG::Dijkstra(int begin,map<int,string> map_intid){
 void Graph_DG::print_path(int begin) {
     string str;
     str = "v" + to_string(begin);
-    cout << "以"<<str<<"为起点的图的最短路径为：" << endl;
+    cout << "the node "<<str<<" shortest path is:" << endl;
     for (int i = 0; i < this->vexnum; i++) {
     	
         if(dis[i].value!=INT_MAX)
         cout << dis[i].path << "=" << dis[i].value << "\t";
         else {
-            cout << dis[i].path << "是无最短路径的" << endl;
+            cout << dis[i].path << "has no shortest path" << endl;
         }
     }
 }
