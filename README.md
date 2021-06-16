@@ -106,4 +106,36 @@ The meta-data of the 177,022 samples is available [meta-data](meta-data.txt).
 This folder includes all the data necessary for generating the Figures. 
 
 ## About the `Code` folder
-This folder contains all of scripts for Closure, Dijkstra and MST( Minimum-cost Spanning Tree) analysis.
+This is an implementation of the Microbiomenetwork. This folder contains all of scripts for Closure, Dijkstra and MST( Minimum-cost Spanning Tree) analysis.
+
+### Requirements
+* g++ (GCC) >= 4.8.5
+* Python >= xxx
+
+### Closure
+A closure is a set of nodes (microbiomes), in which each microbiome can traverse to any other one by direct or indirect transitions (with finite steps). 
+a. Compile
+```
+cd closure
+g++ closure.cpp -o closure
+```
+b. Run
+```
+./closure query.out closure.out 0.868
+```
+in which "query.out" is the search results from MSE, "closure.out" the closure result and "0.868" is the the statistical threshold of the significant high value to define the direct transition
+### Dijkstra
+Dijkstra algorithm is used to compute the pairwise shortest transition steps of all sample pairs in the main closure. 
+a. Compile
+```
+
+```
+b. Run
+
+### MST ( Minimum-cost Spanning Tree)
+The “microbial dispersal” roadmap can be derived by parsing the Minimum Spanning Tree (MST) of the main closure using the Kruskal algorithm. 
+a. Compile
+```
+
+```
+b. Run
