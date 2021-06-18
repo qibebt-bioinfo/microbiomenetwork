@@ -137,7 +137,7 @@ pip install python-igraph
 b. Run
 
 ```
-python3 get_diameter.py query.out diameter.txt
+python get_diameter.py query.out diameter.txt
 ```
 in which "query.out" is the search results from MSE, the first line of diameter.txt is the diameter (the maximum number of edges in the shortest path between any pair of its nodes) of the microbiome transition network, and the next line is the nodes in the shortest path.
 
