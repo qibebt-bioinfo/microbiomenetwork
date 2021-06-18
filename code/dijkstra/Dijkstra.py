@@ -1,22 +1,21 @@
 # coding: utf-8
-
-import csv
-"""
-with open("all_samples") as fr:
-	line = fr.read()
-	samples = line.split()
-"""
-edges = []
-firstline = True
-with open('samples0.csv', 'r') as f:
-	for row in csv.reader(f.read().splitlines()):
-		if firstline == True:
-			firstline = False
-			continue
-		u, v, weight = [i for i in row]
-		edges.append((u, v, float(weight)))
-
 from igraph import Graph as IGraph
+import sys
+
+if len(sys.argv) < 3:
+        print("please execute \n\tpython Dijkstra.py query_out_file result_file")
+        exit(0)
+
+edges = []
+query_file = sys.argv[1]
+result = sys.argv[2]
+
+with open(query_file, 'r') as fr:
+        lines = fr.readlines()
+        for line in lines:
+                s = line.rstrip().split("\t")
+                for i in range(2, len(s), 2):
+                        edges.append((s[1], s[i], float(s[i+1])))
 
 g = IGraph.TupleList(edges, directed=True, vertex_name_attr='name', edge_attrs=None, weights=True)
 # print(g)
@@ -28,12 +27,12 @@ samples = names
 # print(weights)
 # print(g.is_weighted())
 
-# print(g.vcount()) 
+# print(g.vcount()) # 角色数
 
 
-
-f_value = open("shortest_path_value.txt", "w")
-f_info = open("shortest_path_info.txt", "w")
+# 最短路径
+f_value = open(result + ".value", "w")
+f_info = open(result + ".info", "w")
 for b in samples:
 	f_value.write("\t" + b)
 f_value.write("\n")

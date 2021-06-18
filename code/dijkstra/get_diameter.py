@@ -1,22 +1,22 @@
 # coding: utf-8
-
+from igraph import Graph as IGraph
 import sys
-import csv
 
-
-line_count = int(sys.argv[1])
-
+if len(sys.argv) < 3:
+	print("please execute \n\tpython get_diameter.py query_out_file result_file")
+	exit(0)
+ 
 edges = []
 firstline = True
-with open("samples_without_" + str(line_count) + ".csv", 'r') as f:
-	for row in csv.reader(f.read().splitlines()):
-		if firstline == True:
-			firstline = False
-			continue
-		u, v, weight = [i for i in row]
-		edges.append((u, v, float(weight)))
+query_file = sys.argv[1]
+result = sys.argv[2]
 
-from igraph import Graph as IGraph
+with open(query_file, 'r') as fr:
+	lines = fr.readlines()
+	for line in lines:
+		s = line.rstrip().split("\t")
+		for i in range(2, len(s), 2):
+			edges.append((s[1], s[i], float(s[i+1])))
 
 g = IGraph.TupleList(edges, directed=True, vertex_name_attr='name', edge_attrs=None, weights=True)
 # print(g)
@@ -24,8 +24,14 @@ g = IGraph.TupleList(edges, directed=True, vertex_name_attr='name', edge_attrs=N
 names = g.vs["name"]
 weights = g.es["weight"]
 samples = names
+# print(names)
+# print(weights)
+# print(g.is_weighted())
 
-with open("new_net_diameter_"+ str(line_count) +".txt", "w") as fw:
+# print(g.vcount()) # 角色数
+
+# 网络直径：一个网络的直径（或者测地线）被定义为网络中的最长最短路径
+with open(result, "w") as fw:
 	fw.write(str(g.diameter()) + '\n')
 	names = g.vs["name"]
 	diameter = g.get_diameter()
