@@ -126,13 +126,28 @@ b. Run
 in which "query.out" is the search results from MSE, "closure.out" the closure result and "0.868" is the the statistical threshold of the significant high value to define the direct transition
 ### Dijkstra
 Dijkstra algorithm is used to compute the pairwise shortest transition steps of all sample pairs in the main closure. 
-a. Compile
+
+a. Python Environment
+
+For statistical analysis of the microbiome transition network, the python scripts requires python3 and "igraph" package (https://igraph.org/python/) which can be installed using pip:
+```
+pip install python-igraph
 ```
 
-```
 b. Run
 
-### MST ( Minimum-cost Spanning Tree)
+```
+python3 get_diameter.py query.out diameter.txt
+```
+in which "query.out" is the search results from MSE, the first line of diameter.txt is the diameter (the maximum number of edges in the shortest path between any pair of its nodes) of the microbiome transition network, and the next line is the nodes in the shortest path.
+
+```
+python Dijkstra.py query.out shortest_path
+```
+in which "query.out" is the search results from MSE. It will produce two result files, "shortest_path.info" and "shortest_path.value", which respectively includes a matrix represents the shortest path between every pair of nodes in the network and its length. If a pair of nodes are unconnected, it will be represented by "oo" and "inf" in the two files.
+
+
+### MST (Minimum-cost Spanning Tree)
 The “microbial dispersal” roadmap can be derived by parsing the Minimum Spanning Tree (MST) of the main closure using the Kruskal algorithm. 
 a. Compile
 ```
