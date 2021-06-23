@@ -149,8 +149,13 @@ in which "query.out" is the search results from MSE. It will produce two result 
 
 ### MST (Minimum-cost Spanning Tree)
 The “microbial dispersal” roadmap can be derived by parsing the Minimum Spanning Tree (MST) of the main closure using the Kruskal algorithm. 
+
 a. Compile
 ```
-
+ g++ main.cpp -o Kruskal -std=c++11
 ```
 b. Run
+```
+ Kruskal query.out mst.result
+```
+in which "query.out" is the search results from MSE, "mst.result" is the Minimum-cost Spanning Tree result.
