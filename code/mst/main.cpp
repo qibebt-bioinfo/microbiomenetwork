@@ -1,4 +1,4 @@
-#include"Dijkstra.cpp"
+#include"Kruskal.cpp"
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
@@ -11,9 +11,9 @@ bool check(int Vexnum, int edge) {
     return true;
 }
 
-vector <int> find_vex_edge(string infilename){
+vector <int> find_vex_edge(const char * infilename){
 	
-	ifstream infile(infilename.c_str(),ios::in);
+	ifstream infile(infilename,ios::in);
 	if(!infile){
     	cout<<"Can`t open the file "<<infilename<<endl;
     	exit(0);
@@ -84,13 +84,11 @@ map<string,int> gene_map_comp(string infile_name){
 	return map_com;
 } 
 
-int main() {
+int main(int argc, char * argv[]) {
 
-	string buf_infile="all.query.out";
-	string minispantree_name="query_mst2.txt";
 	
 	vector<int> vec_vex_edge;
-	vec_vex_edge=find_vex_edge(buf_infile); 
+	vec_vex_edge=find_vex_edge(argv[1]); 
 	
     
 	Graph_DG graph(vec_vex_edge[0],vec_vex_edge[1]);
@@ -98,9 +96,9 @@ int main() {
     
     
     map<int,string> map_intid;
-    map_intid=graph.createGraph(buf_infile);
+    map_intid=graph.createGraph(argv[1]);
 	cout<<"Now the graph create completed!"<<endl;
-	graph.MiniSpanTree_Kruskal(minispantree_name);
+	graph.MiniSpanTree_Kruskal(argv[2]);
     /* 
     string infile_comp="complete.list"; 
     map<string,int> map_com;
@@ -120,6 +118,5 @@ int main() {
 	cout<<"Now the Dijkstra for everynode complete!"<<endl;
 	*/ 
     
-    system("pause");
     return 0;
 }
