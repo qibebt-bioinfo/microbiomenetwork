@@ -155,7 +155,7 @@ The “microbial dispersal” roadmap can be derived by parsing the Minimum Span
 
 a. Compile
 ```
- g++ Kruskal.cpp -o Kruskal -std=c++11 -fopenmp
+ g++ Kruskal.cpp -o Kruskal -std=c++11
 ```
 b. Run
 ```
