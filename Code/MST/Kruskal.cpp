@@ -29,10 +29,7 @@ typedef struct
 }Arc;  
 
 void Print_help(){
-	 cout <<"\t Minispantree for group level:" << endl; 
-	 cout << "\t-i Input file name [Required, the sample level mst result]" << endl;
-     cout << "\t-o Output file name [Required, the group level mst result]" << endl;
-     cout << endl;
+	cout << "Please input the graph file and mst-result storage paths" << endl;
  }
 
 
@@ -44,26 +41,9 @@ void Para_args(int argc, char * argv[]){
     if (argc ==1)
                 Print_help();
 
-    while(i < argc){
-         if (argv[i][0] != '-') {
-                           printf("Argument # %d Error : Arguments must start with -\n", i);
-                           exit(0);
-                           };
-         switch(argv[i][1]){
-                            case 'i':
-                                      infile_name = argv[i+1];
-                                      
-                                      break; //input
+    infile_name = argv[1];
 
-
-                            case 'o': outfile_name = argv[i+1]; break; 
-                            
-                            case 'h': Print_help(); break;
-                            
-                            default: printf("Unrec argument %s\n", argv[i]); Print_help(); break;
-                        }
-            i+=2;
-        }
+    outfile_name = argv[2];
 }
 
 
