@@ -1,366 +1,245 @@
-#include"Kruskal.h"
-#include <stdlib.h>
-#include <string>
-#include <map>
-#include <fstream>
+#include <iostream>
 #include <vector>
+#include <queue>
+#include <algorithm>
+#include <fstream>
+#include <map>
 #include <sstream>
-#define INFINITE 0xFFFFFFFF  
+#include <string>
+#include <stdlib.h>
+using namespace std;
+#define INFINITE 0xFFFFFFFF   
+#define VertexData unsigned int  
+#define UINT  unsigned int
+#define vexCounts 24  
+vector<string> vec_type;
 
+string infile_name,outfile_name;
 
-Graph_DG::Graph_DG(int vexnum, int edge) {
-
-    this->vexnum = vexnum;
-    this->edge = edge;
-    
-    arc = new double*[this->vexnum];
-    dis = new Dis[this->vexnum];
-    for (int i = 0; i < this->vexnum; i++) {
-        arc[i] = new double[this->vexnum];
-        for (int k = 0; k < this->vexnum; k++) {
-            
-                arc[i][k] = INT_MAX;
-        }
-    }
-}
-
-Graph_DG::~Graph_DG() {
-    delete[] dis;
-    for (int i = 0; i < this->vexnum; i++) {
-        delete this->arc[i];
-    }
-    delete arc;
-}
-
-
-bool Graph_DG::check_edge_value(int start, int end, int weight) {
-    if (start<1 || end<1 || start>vexnum || end>vexnum || weight < 0) {
-        return false;
-    }
-    return true;
-}
-
-void Graph_DG::createGraph() {
-    cout << "Please input the start node & end node of each edge and the weight" << endl;
-    int start;
-    int end;
-    double weight;
-    int count = 0;
-    while (count != this->edge) {
-        cin >> start >> end >> weight;
-        
-        while (!this->check_edge_value(start, end, weight)) {
-            cout << "The input is wrong, please input it again!" << endl;
-            cin >> start >> end >> weight;
-        }
-        
-        arc[start - 1][end - 1] = weight;
-        
-        ++count;
-    }
-}
-
-void Graph_DG::MiniSpanTree_Kruskal(const char * outfile_name)
+struct node 
 {
-    ofstream outfile(outfile_name,ios::out);
-    if(!outfile){
-    	cout<<"Cant open the file "<<outfile_name<<endl;
-    	exit(0);
-	}
-    
-	vector<Arc> vertexArc;
-    ReadArc(vertexArc);
-    sort(vertexArc.begin(), vertexArc.end(), compare);
-    vector<vector<VertexData> > Tree(this->vexnum); 
-    for (unsigned int i = 0; i < this->vexnum; i++)
-    {
-        Tree[i].push_back(i);  
-    }
-    for (unsigned int i = 0; i < vertexArc.size(); i++)
-    {
-        VertexData u = vertexArc[i].u;  
-        VertexData v = vertexArc[i].v;
-        {
-            outfile << u << "\t" << v <<"\t"<< vertexArc[i].cost <<endl;
-        }   
-    }
+    VertexData data;
+    double lowestcost;
+}closedge[vexCounts]; 
+typedef struct 
+{
+    VertexData u;
+    VertexData v;
+    double cost;  
+}Arc;  
+
+void Print_help(){
+	 cout <<"\t Minispantree for group level:" << endl; 
+	 cout << "\t-i Input file name [Required, the sample level mst result]" << endl;
+     cout << "\t-o Output file name [Required, the group level mst result]" << endl;
+     cout << endl;
+ }
+
+
+
+void Para_args(int argc, char * argv[]){
+
+    int i = 1;
+
+    if (argc ==1)
+                Print_help();
+
+    while(i < argc){
+         if (argv[i][0] != '-') {
+                           printf("Argument # %d Error : Arguments must start with -\n", i);
+                           exit(0);
+                           };
+         switch(argv[i][1]){
+                            case 'i':
+                                      infile_name = argv[i+1];
+                                      
+                                      break; //input
+
+
+                            case 'o': outfile_name = argv[i+1]; break; 
+                            
+                            case 'h': Print_help(); break;
+                            
+                            default: printf("Unrec argument %s\n", argv[i]); Print_help(); break;
+                        }
+            i+=2;
+        }
 }
 
 
 
-void Graph_DG::ReadArc(vector<Arc> &vertexArc) 
+
+void AdjMatrix(double adjMat[][vexCounts])
+{
+    for (int i = 0; i < vexCounts; i++)   
+        for (int j = 0; j < vexCounts; j++)
+        {
+            adjMat[i][j] = INFINITE;
+        }
+    //string infile_name="group_trans_1stepmst.txt";
+    ifstream infile(infile_name.c_str(),ios::in);
+    if(!infile){
+    	cout<<"cant open the file "<<infile_name<<endl;
+	exit(0);
+	}
+	string node_source,node_target,buffer,node_value;
+	map<string,int> map_type;
+	map<string,int> :: iterator map_it;
+	int count_type=0;
+	while(getline(infile,buffer)){
+		stringstream str_buf(buffer);
+		str_buf>>node_source>>node_target;
+		map_it=map_type.find(node_source);
+		if(map_it==map_type.end()){
+			map_type[node_source]=count_type;
+			vec_type.push_back(node_source);
+			count_type++;
+		}
+		map_it=map_type.find(node_target);
+		if(map_it==map_type.end()){
+			map_type[node_target]=count_type;
+			vec_type.push_back(node_target);
+			count_type++;
+		}
+	}
+	infile.close();
+	ifstream infile2(infile_name.c_str(),ios::in);
+    if(!infile2){
+    	cout<<"cant open the file "<<infile_name<<endl;
+	}
+	while(getline(infile2,buffer)){
+		stringstream str_buf2(buffer);
+		str_buf2>>node_source>>node_target>>node_value;
+		adjMat[map_type[node_source]][map_type[node_target]]=atof(node_value.c_str());
+	}
+	//cout<<"map_size:\t"<<map_type.size()<<endl;
+	for(int i=0;i<map_type.size();i++)
+		adjMat[i][i] = INFINITE;
+}
+int Minmum(struct node * closedge)
+{
+    double min = INFINITE;
+    int index = -1;
+    for (int i = 0; i < vexCounts;i++)
+    {
+        if (closedge[i].lowestcost < min && closedge[i].lowestcost !=0)
+        {
+            min = closedge[i].lowestcost;
+            index = i;
+        }
+    }
+    return index;
+}
+void MiniSpanTree_Prim(double adjMat[][vexCounts], VertexData s)
+{
+    for (int i = 0; i < vexCounts;i++)
+    {
+        closedge[i].lowestcost = INFINITE;
+    }      
+    closedge[s].data = s; 
+    closedge[s].lowestcost = 0;
+    for (int i = 0; i < vexCounts;i++)
+    {
+        if (i != s)
+        {
+            closedge[i].data = s;
+            closedge[i].lowestcost = adjMat[s][i];
+        }
+    }
+    for (int e = 1; e <= vexCounts -1; e++)
+    {
+        int k = Minmum(closedge);
+        closedge[k].lowestcost = 0;
+        for (int i = 0; i < vexCounts;i++)
+        {
+            if ( adjMat[k][i] < closedge[i].lowestcost)
+            {
+                closedge[i].data = k;
+                closedge[i].lowestcost = adjMat[k][i];
+            }
+        }
+    }
+}
+void ReadArc(double  adjMat[][vexCounts],vector<Arc> &vertexArc)
 {
     Arc * temp = NULL;
-    for (unsigned int i = 0; i < this->vexnum;i++)
+    for (unsigned int i = 0; i < vexCounts;i++)
     {
-        for (unsigned int j = 0; j < this->vexnum; j++)
+        for (unsigned int j = 0; j < i; j++)
         {
-            if (arc[i][j]!=INT_MAX)
+            if (adjMat[i][j]!=INFINITE)
             {
                 temp = new Arc;
                 temp->u = i;
                 temp->v = j;
-                temp->cost = arc[i][j];
+                temp->cost = adjMat[i][j];
                 vertexArc.push_back(*temp);
             }
         }
     }
 }
-
-
-map<int,string> Graph_DG::createGraph(const char * infile_name) {
-	ifstream infile(infile_name,ios::in);
-	if(!infile){
-    	cout<<"Can`t open the file "<<infile_name<<endl;
-    	exit(0);
-	}
-	string buffer;
-	map<string,int> map_id;
-	map<int,string> map_intid;
-	map<string,int> :: iterator map_it;
-	int count=0;
-	while(getline(infile,buffer)){
-		stringstream str_buffer(buffer);
-		string node_source,node_target,edge_weight,tmp_query;
-		str_buffer>>tmp_query>>node_source;
-		map_it=map_id.find(node_source);
-		if(map_it==map_id.end()){
-			map_id[node_source]=count;
-			map_intid[count]=node_source;
-			count++;
-		}
-		while(str_buffer>>node_target>>edge_weight){
-			double edge_weight_d=stod(edge_weight);
-			map_it=map_id.find(node_target);
-			if(map_it==map_id.end()){
-				map_id[node_target]=count;
-				map_intid[count]=node_target;
-				count++;
-			}
-			if(edge_weight_d>=0.870)
-				arc[map_id[node_source]][map_id[node_target]] = 1.00-edge_weight_d;
-			else
-				arc[map_id[node_source]][map_id[node_target]] = INT_MAX;
-		}
-		
-	}
-    infile.close();
-    return map_intid;
+bool compare(Arc  A, Arc  B)
+{
+    return A.cost < B.cost ? true : false;
 }
-
-void Graph_DG::print() {
-    cout << "The adjacency matrix of the graph is" << endl;
-    int count_row = 0; 
-    int count_col = 0; 
-   
-    while (count_row != this->vexnum) {
-        count_col = 0;
-        while (count_col != this->vexnum) {
-            if (arc[count_row][count_col] == INT_MAX)
-                cout << "¡Þ" << " ";
-            else
-            cout << arc[count_row][count_col] << " ";
-            ++count_col;
-        }
-        cout << endl;
-        ++count_row;
+bool FindTree(VertexData u, VertexData v,vector<vector<VertexData> > &Tree)
+{
+    unsigned int index_u = INFINITE;
+    unsigned int index_v = INFINITE;
+    for (unsigned int i = 0; i < Tree.size();i++)
+    {
+        if (find(Tree[i].begin(), Tree[i].end(), u) != Tree[i].end())
+            index_u = i;
+        if (find(Tree[i].begin(), Tree[i].end(), v) != Tree[i].end())
+            index_v = i;
     }
+
+    if (index_u != index_v)
+    {
+        for (unsigned int i = 0; i < Tree[index_v].size();i++)
+        {
+            Tree[index_u].push_back(Tree[index_v][i]);
+        }
+        Tree[index_v].clear();
+        return true;
+    }
+    return false;
 }
-
-void Graph_DG::print(string outfilename,map<int,string> map_intid,map<string,string> map_meta) {
-    
-    ofstream outfile(outfilename.c_str(),ios::out);
-    outfile<<" "<<"\t";
-	for(int i=0;i<this->vexnum;i++){
-		outfile<<map_meta[map_intid[i]]<<"\t";
-	}
-    outfile<<endl;
-    int count_row = 0; 
-    int count_col = 0; 
-    
-    while (count_row != this->vexnum) {
-    	outfile<<map_meta[map_intid[count_row]]<<"\t";
-        count_col = 0;
-        while (count_col != this->vexnum) {
-            if (arc[count_row][count_col] == INT_MAX)
-                outfile << "oo" << "\t";
-            else
-            outfile << arc[count_row][count_col] << "\t";
-            ++count_col;
-        }
-        outfile << endl;
-        ++count_row;
+void MiniSpanTree_Kruskal(double adjMat[][vexCounts])
+{
+    //string outfile_name="boxplotgroup_trans_2step_mst.result";
+    ofstream outfile(outfile_name.c_str(),ios::out);
+	if(!outfile){
+        cout<<"cant open the file "<<outfile_name<<endl;
+        exit(0);
+        } 
+	vector<Arc> vertexArc;
+    ReadArc(adjMat, vertexArc);
+    sort(vertexArc.begin(), vertexArc.end(), compare);
+    vector<vector<VertexData> > Tree(vexCounts);
+    for (unsigned int i = 0; i < vexCounts; i++)
+    {
+        Tree[i].push_back(i);
     }
-}
-
-
-void Graph_DG::Dijkstra(int begin){
-    
-    
-    int i;
-    for (i = 0; i < this->vexnum; i++) {
-        
-        dis[i].path = "v" + to_string(begin) + "-->v" + to_string(i + 1);
-        dis[i].value = arc[begin - 1][i];
+    for (unsigned int i = 0; i < vertexArc.size(); i++)
+    {
+        VertexData u = vertexArc[i].u;  
+        VertexData v = vertexArc[i].v;
+        if (FindTree(u, v, Tree))
+        {
+            outfile << vec_type[u] << "\t" << vec_type[v] << "\t" << adjMat[u][v] << endl;
+        }   
     }
-    
-    dis[begin - 1].value = 0;
-    dis[begin - 1].visit = true;
-
-    int count = 1;
-    
-    while (count != this->vexnum) {
-        
-        int temp=0;
-        int min = INT_MAX;
-        for (i = 0; i < this->vexnum; i++) {
-            if (!dis[i].visit && dis[i].value<min) {
-                min = dis[i].value;
-                temp = i;
-            }
-        }
-        
-        dis[temp].visit = true;
-        ++count;
-        
-        for (i = 0; i < this->vexnum; i++) {
-        	 
-            
-            if (!dis[i].visit && arc[temp][i]!=INT_MAX && (dis[temp].value + arc[temp][i]) < dis[i].value) {
-                
-                dis[i].value = dis[temp].value + arc[temp][i];
-                dis[i].path = dis[temp].path + "-->v" + to_string(i + 1);
-            }
-        }
-    }
-    
-
-}
-
-void Graph_DG::Dijkstra(int begin,map<int,string> map_intid){
-    cout<<"The "<<begin<<" th node Dijkstra begin!"<<endl;
-    Dis *dis = new Dis[this->vexnum];
-    for (int i = 0; i < this->vexnum; i++) {
-        
-        dis[i].path = map_intid[begin-1] + "->" + map_intid[i];
-        dis[i].value = arc[begin - 1][i];
-        dis[i].visit = false;
-    }
-    
-    dis[begin - 1].value = 0;
-    dis[begin - 1].visit = true;
-	
-    int count = 1;
-
-    
-    while (count != this->vexnum) {
-        
-        int temp=0;
-        int min = INT_MAX;
-        for (int i = 0; i < this->vexnum; i++) {
-            if (!dis[i].visit && dis[i].value<min) {
-                min = dis[i].value;
-                temp = i;
-            }
-        }
-        
-        dis[temp].visit = true;
-        ++count;
-     
-        for (int i = 0; i < this->vexnum; i++) {
-        	
-            
-            if (!dis[i].visit && arc[temp][i]!=INT_MAX && (dis[temp].value + arc[temp][i]) < dis[i].value) {
-                
-                dis[i].value = dis[temp].value + arc[temp][i];
-                dis[i].path = dis[temp].path + "->" + map_intid[i];
-                
-            }
-            
-        }
-
-    }
-    string outfilename=to_string((begin-1)%10)+"/"+map_intid[begin-1]+".txt";
-    ofstream outfile(outfilename.c_str(),ios::out);
-    if(!outfile){
-    	cout<<"Can`t open the file "<<outfilename<<endl;
-    	exit(0);
-	}
-    outfile << map_intid[begin-1] << "\t";  
-    for (int i = 0; i < this->vexnum; i++) {
-		if(dis[i].value!=INT_MAX)
-        outfile << dis[i].path << "=" << dis[i].value << "\t";
-        else {
-            outfile << "oo" << "\t";
-        }
-	}
-	outfile.close();
-	/*for (int i = 0; i < this->vexnum; i++) {
-		if(dis[i].value!=INT_MAX)
-        matrix_path[begin-1][i] = dis[i].path + "=" + to_string(dis[i].value);
-        else {
-             matrix_path[begin-1][i] = "oo";
-        }
-	}*/
-    delete[] dis;
- 	cout<<"The "<<begin<<" th node Dijkstra completed!"<<endl;
-    
-
-}
-
-
-void Graph_DG::print_path(int begin) {
-    string str;
-    str = "v" + to_string(begin);
-    cout << "the node "<<str<<" shortest path is:" << endl;
-    for (int i = 0; i < this->vexnum; i++) {
-    	
-        if(dis[i].value!=INT_MAX)
-        cout << dis[i].path << "=" << dis[i].value << "\t";
-        else {
-            cout << dis[i].path << "has no shortest path" << endl;
-        }
-    }
-}
-
-
-
-void Graph_DG::print_path(int begin,string outfilename,map<int,string> map_intid) {
-    ofstream outfile(outfilename.c_str(),ios::app);
-	string str;
-    
-    outfile<<map_intid[begin-1]<<"\t";
-    for (int i = 0; i != this->vexnum; i++) {
-    	
-        if(dis[i].value!=INT_MAX)
-        outfile << dis[i].path << "=" << dis[i].value << "\t";
-        else {
-            outfile << "oo" << "\t";
-        }
-    }
-    outfile<<endl;
-}
-
-
-void Graph_DG::print_path(string outfilename_graph,vector<vector<string> > &matrix_path,map<int,string> map_intid) {
-
-   ofstream outfile(outfilename_graph.c_str(),ios::app);
-	
-	
-   for (int i = 0; i != this->vexnum; i++) {
-   	
-   		outfile << map_intid[i] << "\t"; 
-    	
-    	for (int j = 0; j != this->vexnum; j++) {
-    		
-    		outfile<<matrix_path[i][j]<<"\t"; 
-    		
-		} 
-		
-		outfile << endl;
-        
-
-    }
-    
     outfile.close();
 }
+
+int main(int argc, char * argv[])
+{
+    Para_args(argc, argv);
+    double  adjMat[vexCounts][vexCounts] = { 0 };
+    AdjMatrix(adjMat);
+    MiniSpanTree_Kruskal(adjMat);
+    cout<<"Finished!"<<endl;
+    return 0;
+}
+
