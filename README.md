@@ -6,9 +6,9 @@ Microbiomes are inherently linked by their structural similarity, yet the global
 ## About the `Data` folder
 Microbiome Search Engine (MSE) is a microbiome database platform for searching query microbiomes against the global metagenome data space based on the whole-community-level similarity using Meta-Storms algorithm and it contains 177,022 samples in total. We consider that direct transition possibly exists between sample pairs with significant similarities that cause permutation p-value < 0.01, so that the Meta-Storms similarity of 0.868 is defined as the threshold for direct transition between microbiomes. The search-based microbiome network is built using MSE which can be freely accessible as an online service via http://mse.ac.cn.
 
-For each sample of the input 177,022 microbiomes, we searched it against all other samples for the top 100 matches and connected it with the matched samples that have similarity higher than the threshold of direct transition (0.868), whose output file is "[query.out](https://github.com/qibebt-bioinfo/microbiomenetwork/tree/main/data/query.out)". Moreover, for standalone searches of customized microbiome databases, the kernel and tutorial of MSE are provided at GitHub (https://github.com/qibebt-bioinfo/meta-storms). 
+For each sample of the input 177,022 microbiomes, we searched it against all other samples for the top 100 matches and connected it with the matched samples that have similarity higher than the threshold of direct transition (0.868), whose output file is "[query.out](https://github.com/qibebt-bioinfo/microbiomenetwork/tree/main/Data/query.out)". Moreover, for standalone searches of customized microbiome databases, the kernel and tutorial of MSE are provided at GitHub (https://github.com/qibebt-bioinfo/meta-storms). 
 
-The meta-data of the 177,022 samples is available [meta-data](https://github.com/qibebt-bioinfo/microbiomenetwork/tree/main/data/meta.txt).
+The meta-data of the 177,022 samples is available [meta-data](https://github.com/qibebt-bioinfo/microbiomenetwork/tree/main/Data/meta.txt).
 
 ### The distribution of samples among the habitats
 <table>
