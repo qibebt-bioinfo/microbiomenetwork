@@ -1,0 +1,4 @@
+Query:	A	A	1	B	0.96	C	0.88	D	0.9
+Query:	B	B	1	A	0.96	C	0.95
+Query:	C	C	1	A	0.88	B	0.95
+Query:	D

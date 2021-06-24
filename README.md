@@ -3,8 +3,13 @@
 ## Description
 Microbiomes are inherently linked by their structural similarity, yet the global patterns and features of such similarity are not clear. Here we propose a search-based microbiome transition network to probe the microbiome similarity globally. By  traversing a composition-similarity based network of 177,022 microbiomes, we show that although their compositions are distinct by habitat, each microbiome is on-average only seven neighbors from any other microbiome on Earth, indicating the inherent homology of microbiome at global scale. This network is scale-free, suggesting a high degree of stability and robustness in microbiome transition. By tracking the minimum spanning tree in this network, a global roadmap of microbiome dispersal was derived that tracks the potential formulation of microbial diversity. Such search-based global microbiome networks, reconstructed within hours on just one computing node, provide a readily expanded reference for tracing the origin and evolution of existing or new microbiome datasets. 
 
-## Data source
-The meta-data of the 177,022 samples is available [meta-data](meta-data.txt).
+## About the `Data` folder
+Microbiome Search Engine (MSE) is a microbiome database platform for searching query microbiomes against the global metagenome data space based on the whole-community-level similarity using Meta-Storms algorithm and it contains 177,022 samples in total. We consider that direct transition possibly exists between sample pairs with significant similarities that cause permutation p-value < 0.01, so that the Meta-Storms similarity of 0.868 is defined as the threshold for direct transition between microbiomes. The search-based microbiome network is built using MSE which can be freely accessible as an online service via http://mse.ac.cn.
+
+For each sample of the input 177,022 microbiomes, we searched it against all other samples for the top 100 matches and connected it with the matched samples that have similarity higher than the threshold of direct transition (0.868), whose output file is "[query.out](https://github.com/qibebt-bioinfo/microbiomenetwork/tree/main/data/query.out)". Moreover, for standalone searches of customized microbiome databases, the kernel and tutorial of MSE are provided at GitHub (https://github.com/qibebt-bioinfo/meta-storms). 
+
+The meta-data of the 177,022 samples is available [meta-data](https://github.com/qibebt-bioinfo/microbiomenetwork/tree/main/data/meta.txt).
+
 ### The distribution of samples among the habitats
 <table>
 	<tr>
@@ -102,21 +107,18 @@ The meta-data of the 177,022 samples is available [meta-data](meta-data.txt).
 	</tr>
 </table>
 
-## About the `Figure` folder
-This folder includes all the data necessary for generating the Figures. 
-
 ## About the `Code` folder
 This is an implementation of the Microbiomenetwork. This folder contains all of scripts for Closure, Dijkstra and MST( Minimum-cost Spanning Tree) analysis.
 
 ### Requirements
 * g++ (GCC) >= 4.8.5
-* Python >= xxx
+* Python3
 
 ### Closure
 A closure is a set of nodes (microbiomes), in which each microbiome can traverse to any other one by direct or indirect transitions (with finite steps). 
+
 a. Compile
 ```
-cd closure
 g++ closure.cpp -o closure
 ```
 b. Run
@@ -124,6 +126,7 @@ b. Run
 ./closure query.out closure.out 0.868
 ```
 in which "query.out" is the search results from MSE, "closure.out" the closure result and "0.868" is the the statistical threshold of the significant high value to define the direct transition
+
 ### Dijkstra
 Dijkstra algorithm is used to compute the pairwise shortest transition steps of all sample pairs in the main closure. 
 
@@ -152,10 +155,16 @@ The “microbial dispersal” roadmap can be derived by parsing the Minimum Span
 
 a. Compile
 ```
- g++ main.cpp -o Kruskal -std=c++11
+ g++ main.cpp -o Kruskal -std=c++11 -fopenmp
 ```
 b. Run
 ```
- Kruskal query.out mst.result
+python graph-query.py query.out query.graph
+Kruskal query.graph query.mst
+python3 mst-habitat.py mst.habitat.graph
+Kruskal mst.habitat.graph mst.result
 ```
-in which "query.out" is the search results from MSE, "mst.result" is the Minimum-cost Spanning Tree result.
+in which "query.out" is the search results from MSE; "query.graph" is the search-based microbiome network, of which every line shows the start and end node of an edge with its length (similarity of the pair of samples); "query.mst" is the first level MST on "sample resolution"; "mst.habitat.graph" is the habitat-based network G’ (equation 2), in which each node represents one habitat and distance between two habitats is the average distance of all edges that linked the two habitats in the MST; "mst.result" is the second MST on “habitat resolution”.
+
+## About the `Figure` folder
+This folder includes all the data necessary for generating the Figures. 
