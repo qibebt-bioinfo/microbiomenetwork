@@ -81,10 +81,10 @@ public:
  
     void createGraph();
  
-    map<int,string> createGraph(string infilename);
+    map<int,string> createGraph(const char * infilename);
  
     
-    void MiniSpanTree_Kruskal(string outfile_name);
+    void MiniSpanTree_Kruskal(const char * outfile_name);
 
 	void ReadArc(vector<Arc> &vertexArc);
 

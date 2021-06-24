@@ -1,4 +1,4 @@
-#include"Dijkstra.h"
+#include"Kruskal.h"
 #include <stdlib.h>
 #include <string>
 #include <map>
@@ -60,9 +60,9 @@ void Graph_DG::createGraph() {
     }
 }
 
-void Graph_DG::MiniSpanTree_Kruskal(string outfile_name)
+void Graph_DG::MiniSpanTree_Kruskal(const char * outfile_name)
 {
-    ofstream outfile(outfile_name.c_str(),ios::out);
+    ofstream outfile(outfile_name,ios::out);
     if(!outfile){
     	cout<<"Cant open the file "<<outfile_name<<endl;
     	exit(0);
@@ -108,8 +108,8 @@ void Graph_DG::ReadArc(vector<Arc> &vertexArc)
 }
 
 
-map<int,string> Graph_DG::createGraph(string infile_name) {
-	ifstream infile(infile_name.c_str(),ios::in);
+map<int,string> Graph_DG::createGraph(const char * infile_name) {
+	ifstream infile(infile_name,ios::in);
 	if(!infile){
     	cout<<"Can`t open the file "<<infile_name<<endl;
     	exit(0);
